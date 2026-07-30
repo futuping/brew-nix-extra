@@ -1,19 +1,40 @@
 # brew-nix-extra
 
-Reusable nix-darwin modules for Homebrew casks that need lifecycle behavior
-beyond a normal application bundle.
+Reusable nix-darwin modules for Homebrew casks that need package-specific
+normalization or lifecycle behavior beyond a normal application bundle.
+
+Add the flake input. Follow the consumer's existing inputs when they are
+available so package metadata and generator revisions stay aligned:
+
+```nix
+inputs.brew-nix-extra = {
+  url = "github:futuping/brew-nix-extra";
+  inputs.brew-nix.follows = "brew-nix";
+  inputs.brew-api-extra.follows = "brew-api-extra";
+};
+```
+
+## Motrix Next
+
+The Motrix Next module consumes its metadata from `brew-api-extra`, normalizes
+the upstream ad-hoc signature for the complete application bundle, and adds the
+result to `environment.systemPackages`.
+
+Import and enable it:
+
+```nix
+modules = [
+  inputs.brew-nix-extra.darwinModules.motrix-next
+];
+
+programs.motrix-next.enable = true;
+```
 
 ## WeType
 
 The WeType module keeps package metadata in the official Homebrew cask through
 brew-nix, then deploys the input method to its required writable system
 location at `/Library/Input Methods/WeType.app`.
-
-Add the flake input:
-
-```nix
-inputs.brew-nix-extra.url = "github:futuping/brew-nix-extra";
-```
 
 Import brew-nix before the WeType module:
 

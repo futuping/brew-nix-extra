@@ -1,0 +1,44 @@
+{
+  "nodes": {
+    "brew-api-extra": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1785440378,
+        "narHash": "sha256-eWbqYnF9GdKKpZRaomPlv5MmRECjFjNNdYyAxXwbQpg=",
+        "owner": "futuping",
+        "repo": "brew-api-extra",
+        "rev": "238833f7029d004eab9f4f30d30f67038ad8f33c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "futuping",
+        "repo": "brew-api-extra",
+        "type": "github"
+      }
+    },
+    "brew-nix": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784490391,
+        "narHash": "sha256-/qnykj46xlcFPaoiksoGCk4g2g4EtF72ZNzYJtHTmh4=",
+        "owner": "BatteredBunny",
+        "repo": "brew-nix",
+        "rev": "05377d6a5e6707a1914263ff02df0a5c597374d8",
+        "type": "github"
+      },
+      "original": {
+        "owner": "BatteredBunny",
+        "repo": "brew-nix",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "brew-api-extra": "brew-api-extra",
+        "brew-nix": "brew-nix"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
