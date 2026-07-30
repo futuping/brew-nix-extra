@@ -16,18 +16,21 @@ inputs.brew-nix-extra = {
 
 ## Motrix Next
 
-The Motrix Next module consumes its metadata from `brew-api-extra`, normalizes
-the upstream ad-hoc signature for the complete application bundle, and adds the
-result to `environment.systemPackages`.
+The Motrix Next overlay consumes its metadata from `brew-api-extra`, normalizes
+the upstream ad-hoc signature for the complete application bundle, and exposes
+the result as `pkgs.brewCasks.motrix-next`.
 
-Import and enable it:
+Import the module once to append the overlay, then manage Motrix Next in the
+ordinary system package list:
 
 ```nix
 modules = [
   inputs.brew-nix-extra.darwinModules.motrix-next
 ];
 
-programs.motrix-next.enable = true;
+environment.systemPackages = with pkgs.brewCasks; [
+  motrix-next
+];
 ```
 
 ## WeType

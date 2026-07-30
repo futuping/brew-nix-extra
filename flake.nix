@@ -19,10 +19,20 @@
       brew-nix,
       brew-api-extra,
     }:
+    let
+      motrixNextOverlay = import ./overlays/motrix-next.nix {
+        inherit brew-api-extra brew-nix;
+      };
+    in
     {
+      overlays = {
+        motrix-next = motrixNextOverlay;
+        default = self.overlays.motrix-next;
+      };
+
       darwinModules = {
         motrix-next = import ./modules/motrix-next.nix {
-          inherit brew-api-extra brew-nix;
+          overlay = motrixNextOverlay;
         };
         wetype = import ./modules/wetype.nix;
         default = self.darwinModules.wetype;
