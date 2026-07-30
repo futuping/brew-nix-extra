@@ -1,5 +1,5 @@
 {
-  description = "Extra nix-darwin modules for brew-nix packages";
+  description = "Extra overlays and nix-darwin modules for brew-nix packages";
 
   inputs = {
     brew-nix = {
@@ -20,17 +20,22 @@
       brew-api-extra,
     }:
     let
+      googleChromeOverlay = import ./overlays/google-chrome.nix;
       motrixNextOverlay = import ./overlays/motrix-next.nix {
         inherit brew-api-extra brew-nix;
       };
     in
     {
       overlays = {
+        google-chrome = googleChromeOverlay;
         motrix-next = motrixNextOverlay;
         default = self.overlays.motrix-next;
       };
 
       darwinModules = {
+        google-chrome = import ./modules/google-chrome.nix {
+          overlay = googleChromeOverlay;
+        };
         motrix-next = import ./modules/motrix-next.nix {
           overlay = motrixNextOverlay;
         };

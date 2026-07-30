@@ -1,7 +1,8 @@
 # brew-nix-extra
 
-Reusable nix-darwin modules for Homebrew casks that need package-specific
-normalization or lifecycle behavior beyond a normal application bundle.
+Reusable overlays and nix-darwin modules for Homebrew casks that need
+package-specific normalization or lifecycle behavior beyond a normal
+application bundle.
 
 Add the flake input. Follow the consumer's existing inputs when they are
 available so package metadata and generator revisions stay aligned:
@@ -13,6 +14,33 @@ inputs.brew-nix-extra = {
   inputs.brew-api-extra.follows = "brew-api-extra";
 };
 ```
+
+## Google Chrome
+
+The official Homebrew cask intentionally publishes the mutable Stable DMG with
+`sha256: no_check`. The Google Chrome overlay preserves brew-nix's official
+cask metadata, app artifact, and installation logic while replacing only the
+version and source with an automatically maintained fixed hash. It also
+normalizes the extracted application's signature after brew-nix materializes
+the APFS DMG in the Nix store.
+
+Import the module once, then select Chrome like an ordinary cask:
+
+```nix
+modules = [
+  inputs.brew-nix-extra.darwinModules.google-chrome
+];
+
+environment.systemPackages = with pkgs.brewCasks; [
+  google-chrome
+];
+```
+
+The scheduled updater cross-checks the official Homebrew cask and Google's
+fully rolled-out Apple Silicon Stable release. When the DMG changes, a macOS
+runner mounts it and verifies its Google Team ID, bundle ID, version, and
+Developer ID signature before publishing the new SRI hash. HTTP validators
+avoid downloading the unchanged DMG on routine checks.
 
 ## Motrix Next
 

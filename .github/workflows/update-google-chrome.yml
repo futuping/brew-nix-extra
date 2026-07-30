@@ -1,0 +1,65 @@
+name: Update Google Chrome
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: Download and verify the DMG even when validators match
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-google-chrome
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: macos-15
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Run updater tests
+        run: python3 -m unittest discover -s tests
+
+      - name: Update the verified source pin
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=()
+          if [[ "${{ inputs.force }}" == "true" ]]; then
+            args+=(--force)
+          fi
+          python3 scripts/update_google_chrome.py "${args[@]}"
+
+      - name: Commit an update or keep schedules active
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if ! git diff --quiet -- sources/google-chrome.json; then
+            version="$(
+              python3 -c \
+                'import json; print(json.load(open("sources/google-chrome.json"))["version"])'
+            )"
+            git add sources/google-chrome.json
+            git commit -m "chore: update Google Chrome to ${version}"
+            git push
+            exit 0
+          fi
+
+          last_commit_epoch="$(git log -1 --format=%ct)"
+          now_epoch="$(date +%s)"
+          if (( now_epoch - last_commit_epoch >= 30 * 24 * 60 * 60 )); then
+            git commit --allow-empty -m "chore: keep updater active"
+            git push
+          fi
