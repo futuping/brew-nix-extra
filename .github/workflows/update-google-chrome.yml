@@ -32,11 +32,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          args=()
           if [[ "${{ inputs.force }}" == "true" ]]; then
-            args+=(--force)
+            python3 scripts/update_google_chrome.py --force
+          else
+            python3 scripts/update_google_chrome.py
           fi
-          python3 scripts/update_google_chrome.py "${args[@]}"
 
       - name: Commit an update or keep schedules active
         shell: bash
