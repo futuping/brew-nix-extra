@@ -39,6 +39,7 @@
         motrix-next = import ./modules/motrix-next.nix {
           overlay = motrixNextOverlay;
         };
+        neteasemusic = import ./modules/neteasemusic.nix;
         wetype = import ./modules/wetype.nix;
         default = self.darwinModules.wetype;
       };
