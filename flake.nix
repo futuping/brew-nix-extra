@@ -24,11 +24,13 @@
       motrixNextOverlay = import ./overlays/motrix-next.nix {
         inherit brew-api-extra brew-nix;
       };
+      neteasemusicOverlay = import ./overlays/neteasemusic.nix;
     in
     {
       overlays = {
         google-chrome = googleChromeOverlay;
         motrix-next = motrixNextOverlay;
+        neteasemusic = neteasemusicOverlay;
         default = self.overlays.motrix-next;
       };
 
@@ -39,7 +41,9 @@
         motrix-next = import ./modules/motrix-next.nix {
           overlay = motrixNextOverlay;
         };
-        neteasemusic = import ./modules/neteasemusic.nix;
+        neteasemusic = import ./modules/neteasemusic.nix {
+          overlay = neteasemusicOverlay;
+        };
         wetype = import ./modules/wetype.nix;
         default = self.darwinModules.wetype;
       };
