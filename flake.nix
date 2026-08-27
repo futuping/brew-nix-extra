@@ -25,12 +25,16 @@
         inherit brew-api-extra brew-nix;
       };
       neteasemusicOverlay = import ./overlays/neteasemusic.nix;
+      thirdPartyCasksOverlay = import ./overlays/third-party-casks.nix {
+        inherit brew-api-extra brew-nix;
+      };
     in
     {
       overlays = {
         google-chrome = googleChromeOverlay;
         motrix-next = motrixNextOverlay;
         neteasemusic = neteasemusicOverlay;
+        third-party-casks = thirdPartyCasksOverlay;
         default = self.overlays.motrix-next;
       };
 
@@ -44,6 +48,9 @@
         };
         neteasemusic = import ./modules/neteasemusic.nix {
           overlay = neteasemusicOverlay;
+        };
+        third-party-casks = import ./modules/third-party-casks.nix {
+          overlay = thirdPartyCasksOverlay;
         };
         wetype = import ./modules/wetype.nix;
         default = self.darwinModules.wetype;

@@ -61,6 +61,23 @@ environment.systemPackages = with pkgs.brewCasks; [
 ];
 ```
 
+## Shared third-party casks
+
+When a configuration uses Motrix Next and Tinycast, import the shared overlay
+once. It consumes both packages from `brew-api-extra`, preserves Motrix's
+signature normalization, and exposes each package as an ordinary brew-nix cask.
+
+```nix
+modules = [
+  inputs.brew-nix-extra.darwinModules.third-party-casks
+];
+
+environment.systemPackages = with pkgs.brewCasks; [
+  motrix-next
+  tinycast
+];
+```
+
 ## WeType
 
 The WeType module keeps package metadata in the official Homebrew cask through
