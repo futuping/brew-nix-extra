@@ -20,6 +20,22 @@
       brew-api-extra,
     }:
     let
+      requiredBrewApiExtraCaskTokens = import ./overlays/brew-api-extra-cask-tokens.nix;
+      lockedBrewApiExtraCasks = builtins.fromJSON (
+        builtins.readFile "${brew-api-extra.outPath}/cask.json"
+      );
+      lockedBrewApiExtraCaskTokens = builtins.map (cask: cask.token) lockedBrewApiExtraCasks;
+      missingBrewApiExtraCaskTokens = builtins.filter (
+        token: !(builtins.elem token lockedBrewApiExtraCaskTokens)
+      ) requiredBrewApiExtraCaskTokens;
+      brewApiExtraLockIsConsistent =
+        if missingBrewApiExtraCaskTokens == [ ] then
+          true
+        else
+          builtins.throw ''
+            brew-api-extra lock is missing required cask token(s): ${builtins.concatStringsSep ", " missingBrewApiExtraCaskTokens}
+            Run: nix flake update brew-api-extra
+          '';
       googleChromeOverlay = import ./overlays/google-chrome.nix;
       motrixNextOverlay = import ./overlays/motrix-next.nix {
         inherit brew-api-extra brew-nix;
@@ -29,6 +45,7 @@
         inherit brew-api-extra brew-nix;
       };
     in
+    assert brewApiExtraLockIsConsistent;
     {
       overlays = {
         google-chrome = googleChromeOverlay;

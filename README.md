@@ -42,6 +42,22 @@ runner mounts it and verifies its Google Team ID, bundle ID, version, and
 Developer ID signature before publishing the new SRI hash. HTTP validators
 avoid downloading the unchanged DMG on routine checks.
 
+## Lock consistency
+
+The flake validates that every cask exported from the shared third-party
+overlay exists in its own locked `brew-api-extra` catalog. This is a
+compatibility check rather than a freshness check: an older catalog is valid
+as long as it contains every required cask. Pushes and pull requests run the
+standalone check without consumer input overrides:
+
+```sh
+nix flake check --no-build --no-update-lock-file
+```
+
+When adding another catalog-backed cask, add its token to
+`overlays/brew-api-extra-cask-tokens.nix`; the shared overlay and lock check
+both consume that registry.
+
 ## Motrix Next
 
 The Motrix Next overlay consumes its metadata from `brew-api-extra`, normalizes
