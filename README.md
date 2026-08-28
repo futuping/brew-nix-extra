@@ -103,35 +103,3 @@ The module expects `brew-nix.enable = true;` so that
 `pkgs.brewCasks.wetype` is available. It installs, upgrades, and removes only
 the WeType copy tracked by its ownership marker. After the first installation,
 add WeType once in System Settings.
-
-## AweSun
-
-The official AweSun cask downloads a DMG containing a privileged PKG. The PKG
-installs the application in `/Applications`, registers launch agents and launch
-daemons, and installs a virtual audio driver. Those system paths and installer
-scripts require a dedicated lifecycle module rather than an ordinary brew-nix
-package.
-
-Import brew-nix before the AweSun module:
-
-```nix
-modules = [
-  inputs.brew-nix.darwinModules.default
-  inputs.brew-nix-extra.darwinModules.awesun
-];
-```
-
-Then enable AweSun:
-
-```nix
-programs.awesun.enable = true;
-```
-
-The module uses `pkgs.brewCasks.awesun` as its metadata source. During
-activation it verifies the mounted PKG's Developer ID Installer identity and
-Gatekeeper assessment before installation. An ownership marker makes upgrades
-idempotent and prevents the module from overwriting or removing unmanaged
-AweSun artifacts. Disabling the module removes its application, services,
-virtual audio driver, and package receipts while preserving application data
-and logs. macOS privacy permissions still require manual approval after the
-first installation.

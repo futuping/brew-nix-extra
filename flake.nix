@@ -39,7 +39,6 @@
       };
 
       darwinModules = {
-        awesun = import ./modules/awesun.nix;
         google-chrome = import ./modules/google-chrome.nix {
           overlay = googleChromeOverlay;
         };
