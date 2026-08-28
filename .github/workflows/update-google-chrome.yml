@@ -2,7 +2,7 @@ name: Update Google Chrome
 
 on:
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "17 7 * * *"
   workflow_dispatch:
     inputs:
       force:
