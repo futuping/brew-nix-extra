@@ -79,9 +79,10 @@ environment.systemPackages = with pkgs.brewCasks; [
 
 ## Shared third-party casks
 
-When a configuration uses Motrix Next and Tinycast, import the shared overlay
-once. It consumes both packages from `brew-api-extra`, preserves Motrix's
-signature normalization, and exposes each package as an ordinary brew-nix cask.
+When a configuration uses catalog-backed casks such as Motrix Next, import the
+shared overlay once. It consumes the packages from `brew-api-extra`, preserves
+Motrix's signature normalization, and exposes each package as an ordinary
+brew-nix cask.
 
 ```nix
 modules = [
@@ -90,7 +91,6 @@ modules = [
 
 environment.systemPackages = with pkgs.brewCasks; [
   motrix-next
-  tinycast
 ];
 ```
 

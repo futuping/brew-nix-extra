@@ -1,4 +1,3 @@
 [
   "motrix-next"
-  "tinycast"
 ]
