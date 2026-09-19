@@ -51,12 +51,43 @@ as long as it contains every required cask. Pushes and pull requests run the
 standalone check without consumer input overrides:
 
 ```sh
-nix flake check --no-build --no-update-lock-file
+nix flake check --all-systems --no-build --no-update-lock-file
 ```
 
 When adding another catalog-backed cask, add its token to
 `overlays/brew-api-extra-cask-tokens.nix`; the shared overlay and lock check
 both consume that registry.
+
+The standalone checks apply the actual shared Darwin module and overlay,
+force every registered cask's Apple Silicon and Intel asset variants, compare
+the version, source URL, hash and bundle name with the locked catalog, and verify
+that existing casks remain in the namespace. The flake's own nixpkgs input
+provides these evaluation checks. Nixpkgs 26.11 has dropped x86_64-darwin, so
+the Intel variation is evaluated under the Apple Silicon package set; this
+checks metadata selection, not a native Intel build.
+
+## Rayburst
+
+`rayburst` is the renamed Motrix Next application. The shared third-party
+module exposes it as `pkgs.brewCasks.rayburst`; select only the bare token in
+the consumer's cask list. The catalog explicitly pins the requested
+4.0.0-beta.2 release while the upstream tap still describes beta.1. Future
+beta adoption requires a reviewed registry edit. The original `motrix-next`
+entry and focused module remain available for existing consumers.
+
+```nix
+modules = [
+  inputs.brew-nix-extra.darwinModules.third-party-casks
+];
+
+environment.systemPackages = with pkgs.brewCasks; [
+  rayburst
+];
+```
+
+Rayburst uses `Rayburst.app` and a new bundle identifier. It does not import
+Motrix Next settings, tasks or history. This module adds package availability;
+it does not delete old user data or register browser native-messaging hosts.
 
 ## Motrix Next
 

@@ -3,11 +3,11 @@
     "brew-api-extra": {
       "flake": false,
       "locked": {
-        "lastModified": 1787970670,
-        "narHash": "sha256-ryQXGakvpWx7mqb/bDmZEWtlrpRXdPiWd0MkfOXDUvY=",
+        "lastModified": 1789795608,
+        "narHash": "sha256-jqzKqDhAhhb7TnwjI7S59JfYxkO4Img/vZVJv+ZSqWs=",
         "owner": "futuping",
         "repo": "brew-api-extra",
-        "rev": "59701509028a6cd330d46b3ddb6393b4e0242d3a",
+        "rev": "67f7c3d23b484975cd422fe7f6c8fb55e5afab3a",
         "type": "github"
       },
       "original": {
@@ -32,10 +32,27 @@
         "type": "github"
       }
     },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1788982683,
+        "narHash": "sha256-PJCTsE4I20CrJJPcye9/z6brRFysG5+aygr/dZK097k=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "5052d7ccbcfb7e4ae1586cb2ecf95a2e3707dce9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "brew-api-extra": "brew-api-extra",
-        "brew-nix": "brew-nix"
+        "brew-nix": "brew-nix",
+        "nixpkgs": "nixpkgs"
       }
     }
   },

@@ -2,6 +2,8 @@
   description = "Extra overlays and nix-darwin modules for brew-nix packages";
 
   inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+
     brew-nix = {
       url = "github:BatteredBunny/brew-nix";
       flake = false;
@@ -16,6 +18,7 @@
   outputs =
     {
       self,
+      nixpkgs,
       brew-nix,
       brew-api-extra,
     }:
@@ -47,6 +50,16 @@
     in
     assert brewApiExtraLockIsConsistent;
     {
+      checks = nixpkgs.lib.genAttrs [ "aarch64-darwin" "x86_64-linux" ] (
+        system:
+        import ./tests/catalog-packages.nix {
+          inherit nixpkgs system;
+          module = self.darwinModules.third-party-casks;
+          catalog = lockedBrewApiExtraCasks;
+          tokens = requiredBrewApiExtraCaskTokens;
+        }
+      );
+
       overlays = {
         google-chrome = googleChromeOverlay;
         motrix-next = motrixNextOverlay;
