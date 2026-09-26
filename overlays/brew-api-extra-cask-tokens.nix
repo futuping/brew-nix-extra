@@ -1,4 +1,5 @@
 [
   "motrix-next"
   "rayburst"
+  "search"
 ]

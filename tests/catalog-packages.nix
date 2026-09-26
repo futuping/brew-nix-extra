@@ -38,11 +38,15 @@ let
           source = if variation == null then cask else cask.variations.${variation};
           app = (builtins.head cask.artifacts).app;
         in
-        assert package.version == cask.version;
-        assert package.src.url == source.url;
-        assert package.src.outputHash == source.sha256;
-        assert package.sourceRoot == builtins.head app;
-        package.drvPath;
+        # A single-architecture cask has no Intel variation to select.
+        if variation != null && !(cask ? variations) then
+          null
+        else
+          assert package.version == cask.version;
+          assert package.src.url == source.url;
+          assert package.src.outputHash == source.sha256;
+          assert package.sourceRoot == builtins.head app;
+          package.drvPath;
     in
     assert packages.brewCasks.existing-cask == "preserved";
     map checkToken tokens;
@@ -52,7 +56,7 @@ let
   ];
 in
 {
-  # Force the real module, overlay and both asset variants during --no-build
+  # Force the real module, overlay and available asset variants during --no-build
   # evaluation. Nixpkgs 26.11 no longer supports x86_64-darwin, so the Intel
   # variation is checked under the supported Apple Silicon package set.
   catalog-packages = builtins.deepSeq derivations (

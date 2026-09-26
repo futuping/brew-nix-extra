@@ -3,11 +3,11 @@
     "brew-api-extra": {
       "flake": false,
       "locked": {
-        "lastModified": 1789795608,
-        "narHash": "sha256-jqzKqDhAhhb7TnwjI7S59JfYxkO4Img/vZVJv+ZSqWs=",
+        "lastModified": 1790417258,
+        "narHash": "sha256-3Twg4gGyPYHtOlCKz6L5mSCRQl2iPNrcojKEECLzNQw=",
         "owner": "futuping",
         "repo": "brew-api-extra",
-        "rev": "67f7c3d23b484975cd422fe7f6c8fb55e5afab3a",
+        "rev": "7ced3df330e8c152762e8d34af4b6284c5efa14b",
         "type": "github"
       },
       "original": {

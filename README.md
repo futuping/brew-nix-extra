@@ -59,7 +59,7 @@ When adding another catalog-backed cask, add its token to
 both consume that registry.
 
 The standalone checks apply the actual shared Darwin module and overlay,
-force every registered cask's Apple Silicon and Intel asset variants, compare
+force every registered cask's default and available Intel asset variants, compare
 the version, source URL, hash and bundle name with the locked catalog, and verify
 that existing casks remain in the namespace. The flake's own nixpkgs input
 provides these evaluation checks. Nixpkgs 26.11 has dropped x86_64-darwin, so
@@ -88,6 +88,14 @@ environment.systemPackages = with pkgs.brewCasks; [
 Rayburst uses `Rayburst.app` and a new bundle identifier. It does not import
 Motrix Next settings, tasks or history. This module adds package availability;
 it does not delete old user data or register browser native-messaging hosts.
+
+## Search
+
+The shared third-party module exposes the author's `driceroland/tap/search`
+cask as `pkgs.brewCasks.search`. Select `search` in the consumer's ordinary
+cask list. The upstream application requires Apple Silicon and macOS 14 or
+later; it does not publish an Intel variant. Version, URL, checksum and these
+platform requirements come from the locked `brew-api-extra` catalog.
 
 ## Motrix Next
 
