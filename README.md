@@ -42,6 +42,45 @@ runner mounts it and verifies its Google Team ID, bundle ID, version, and
 Developer ID signature before publishing the new SRI hash. HTTP validators
 avoid downloading the unchanged DMG on routine checks.
 
+## UU Remote
+
+The versioned UU Remote CDN URL can return HTTP 403 because NetEase requires
+a temporary download signature. This overlay keeps the official cask's URL
+and adds NetEase's download endpoint as a fallback; the endpoint redirects to
+a freshly signed URL. The cask's version, filename and SHA-256 remain unchanged.
+If the endpoint serves a newer release, the hash check rejects it until the
+consumer updates its official cask metadata.
+
+```nix
+modules = [
+  inputs.brew-nix-extra.darwinModules.uuremote
+];
+
+environment.systemPackages = with pkgs.brewCasks; [
+  uuremote
+];
+```
+
+The module only exposes the corrected package. It does not select the app or
+change system services. Standalone checks use the locked official `brew-api`
+catalog and force the generated package through the real module.
+
+## Maintainer commands
+
+Use the repository's locked Nix environment for validation and updates:
+
+```sh
+nix develop --no-update-lock-file .#maintainer
+nix run --no-update-lock-file .#maintainer-check
+# Run from the writable repository root on Apple Silicon macOS:
+nix run --no-update-lock-file .#update-google-chrome -- --check
+```
+
+The check runs Nix formatting, updater unit tests, workflow parsing and
+standalone flake evaluation. Python 3.13 and its dependencies come from the
+repository lock; user Python packages are excluded. The Chrome updater keeps
+its existing daily schedule and source-verification behavior.
+
 ## Lock consistency
 
 The flake validates that every cask exported from the shared third-party
