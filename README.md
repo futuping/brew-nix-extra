@@ -42,6 +42,14 @@ runner mounts it and verifies its Google Team ID, bundle ID, version, and
 Developer ID signature before publishing the new SRI hash. HTTP validators
 avoid downloading the unchanged DMG on routine checks.
 
+If strict verification reports the Finder metadata error described in
+[Apple QA1940](https://developer.apple.com/library/archive/qa/qa1940/_index.html),
+the updater copies the app to a temporary directory, removes only
+`com.apple.FinderInfo` and `com.apple.ResourceFork`, then repeats strict
+verification of the original signature and all Google identity checks.
+Other signature failures still stop the update. The read-only DMG and its
+published SHA-256 remain unchanged; the updater never re-signs the app.
+
 ## UU Remote
 
 The versioned UU Remote CDN URL can return HTTP 403 because NetEase requires

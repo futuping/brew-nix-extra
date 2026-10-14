@@ -300,6 +300,31 @@ def run(command: list[str]) -> subprocess.CompletedProcess[str]:
         raise UpdateError(f"command failed: {' '.join(command)}{suffix}") from error
 
 
+def verify_app_signature(app: Path, staging: Path) -> Path:
+    """Verify the original signature, normalizing only forbidden Finder metadata."""
+    try:
+        run(["/usr/bin/codesign", "--verify", "--deep", "--strict", str(app)])
+        return app
+    except UpdateError as error:
+        metadata_error = (
+            "resource fork, Finder information, or similar detritus not allowed"
+        )
+        if metadata_error not in str(error):
+            raise
+
+    # Apple QA1940: these two extended attributes are forbidden by codesign.
+    # Work on a disposable copy because the original DMG must remain read-only.
+    # Preserve other metadata and symlinks, and never re-sign the upstream app.
+    copied_app = staging / EXPECTED_APP
+    run(["/usr/bin/ditto", "--rsrc", "--extattr", str(app), str(copied_app)])
+    for attribute in ("com.apple.FinderInfo", "com.apple.ResourceFork"):
+        # -s prevents following a symlink out of the copied bundle.
+        run(["/usr/bin/xattr", "-drs", attribute, str(copied_app)])
+    run(["/usr/bin/codesign", "--verify", "--deep", "--strict", str(copied_app)])
+    print("Verified the original Chrome signature on a copy without Finder metadata")
+    return copied_app
+
+
 def inspect_dmg(path: Path) -> str:
     if sys.platform != "darwin":
         raise UpdateError("Chrome DMG verification requires macOS")
@@ -328,7 +353,8 @@ def inspect_dmg(path: Path) -> str:
             if not app.is_dir() or not plist_path.is_file():
                 raise UpdateError(f"Chrome DMG does not contain {EXPECTED_APP}")
 
-            run(["/usr/bin/codesign", "--verify", "--deep", "--strict", str(app)])
+            app = verify_app_signature(app, Path(temporary) / "verification")
+            plist_path = app / "Contents" / "Info.plist"
             signature = run(
                 ["/usr/bin/codesign", "-dv", "--verbose=4", str(app)]
             )
