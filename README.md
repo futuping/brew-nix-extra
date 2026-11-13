@@ -89,6 +89,26 @@ standalone flake evaluation. Python 3.13 and its dependencies come from the
 repository lock; user Python packages are excluded. The Chrome updater keeps
 its existing daily schedule and source-verification behavior.
 
+The Chrome updater can retry twice on a fresh GitHub runner when no runner was
+allocated because of documented capacity constraints, or when Nix installation
+fails with the observed `cat: /etc/zshrc: Attribute not found` error before any
+updater step runs. A separate Linux workflow checks the failed attempt and its
+annotations or logs before requesting a retry. It only accepts this repository's
+scheduled or manually dispatched updater on `main`, with at most three total
+attempts. Application verification failures and unknown errors remain failures;
+retries cannot guarantee runner availability.
+
+Inspect a retry decision without changing GitHub state:
+
+```sh
+GITHUB_TOKEN="$(gh auth token)" nix run --no-update-lock-file .#retry-chrome-ci -- \
+  --repository futuping/brew-nix-extra --run-id RUN_ID --attempt ATTEMPT
+```
+
+Only `--apply` requests a rerun, after rechecking that the same failed attempt is
+still current. The workflow executes the trusted `main` branch and never runs
+code or artifacts from the triggering checkout.
+
 ## Lock consistency
 
 The flake validates that every cask exported from the shared third-party

@@ -15,6 +15,7 @@ let
         -exec ${pkgs.nixfmt}/bin/nixfmt --check {} +
       ${python}/bin/python3 -m unittest discover -s tests
       ${python}/bin/python3 -c 'from pathlib import Path; import yaml; [yaml.safe_load(p.read_text()) for p in Path(".github/workflows").glob("*.yml")]'
+      ${pkgs.actionlint}/bin/actionlint .github/workflows/*.yml
       ${pkgs.nix}/bin/nix flake check --all-systems --no-build --no-update-lock-file "${self}"
     '';
   };
@@ -33,6 +34,13 @@ let
         "$@" --source "$PWD/sources/google-chrome.json"
     '';
   };
+  retryCi = pkgs.writeShellApplication {
+    name = "retry-chrome-ci";
+    text = ''
+      ${isolation}
+      exec ${python}/bin/python3 "${self}/scripts/retry_chrome_ci.py" "$@"
+    '';
+  };
 in
 {
   devShell = pkgs.mkShellNoCC {
@@ -40,6 +48,7 @@ in
       pkgs.nix
       pkgs.nixfmt
       pkgs.git
+      pkgs.actionlint
       python
     ];
     PYTHONNOUSERSITE = "1";
@@ -52,5 +61,9 @@ in
   updateApp = {
     type = "app";
     program = "${update}/bin/update-google-chrome";
+  };
+  retryCiApp = {
+    type = "app";
+    program = "${retryCi}/bin/retry-chrome-ci";
   };
 }

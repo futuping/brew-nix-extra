@@ -93,10 +93,12 @@
       apps =
         forAllSystems (system: {
           maintainer-check = (maintainerFor system).checkApp;
+          retry-chrome-ci = (maintainerFor system).retryCiApp;
         })
         // {
           aarch64-darwin = {
             maintainer-check = (maintainerFor "aarch64-darwin").checkApp;
+            retry-chrome-ci = (maintainerFor "aarch64-darwin").retryCiApp;
             update-google-chrome = (maintainerFor "aarch64-darwin").updateApp;
           };
         };

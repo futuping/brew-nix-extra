@@ -19,11 +19,15 @@ concurrency:
 
 jobs:
   update:
+    if: ${{ github.ref == 'refs/heads/main' }}
     runs-on: macos-15
     timeout-minutes: 20
 
     steps:
+      # A delayed or retried job must start from the current publication base.
       - uses: actions/checkout@v7
+        with:
+          ref: main
 
       - uses: cachix/install-nix-action@13d8dd58da0234aa297dedd986986ccb8e7f3e24 # v31.11.1
 
